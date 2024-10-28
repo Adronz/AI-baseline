@@ -1,5 +1,5 @@
 print("SCRIPT HAS STARTED RUNNING")
-
+print('commit test')
 import numpy as np 
 import torch 
 import torch.nn as nn
