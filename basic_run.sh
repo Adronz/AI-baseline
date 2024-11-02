@@ -15,4 +15,4 @@ source ~/miniconda3/etc/profile.d/conda.sh   # Source the conda script (adjust p
 conda activate kinome  
 
 # Run your Python script
-python /dors/wankowicz_lab/adrian/kinase_colabfold/kinase_new_structs/DCGAN_server.py
+python /dors/wankowicz_lab/adrian/kinase_colabfold/kinase_new_structs/VAE_GAN.py
