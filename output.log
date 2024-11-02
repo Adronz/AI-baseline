@@ -1,0 +1,5 @@
+SCRIPT HAS STARTED RUNNING
+Using device: cuda:0
+EPOCH 1/1: Disc train loss: 0.4070, Gen train loss: 2.9305 
+training finished!
+torch.Size([64, 1, 28, 28])
