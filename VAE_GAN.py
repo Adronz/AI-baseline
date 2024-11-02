@@ -1,10 +1,14 @@
 print("SCRIPT HAS STARTED RUNNING")
+<<<<<<< HEAD
 
+=======
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
 import numpy as np 
 import torch 
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import datasets, transforms
+<<<<<<< HEAD
 from torchsummary import summary
 from torch.optim.lr_scheduler import StepLR
 import matplotlib.pyplot as plt
@@ -12,6 +16,17 @@ from torchvision.utils import save_image
 import time 
 
 start_time = time.time()
+=======
+import csv
+import math
+import struct
+import random
+import matplotlib.pyplot as plt
+import struct
+from array import array
+from os.path  import join
+from torchvision.utils import save_image
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(f'Using device: {device}')
@@ -29,6 +44,7 @@ test_dataset = datasets.CIFAR10(root='./data', train=False, download=True, trans
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=64, shuffle=True)
 test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=64, shuffle=False)
 
+<<<<<<< HEAD
 
 def save_n_images(n, generator, file_dir, real_data, latent_channels):
     # Ensure the model uses its current device
@@ -60,12 +76,122 @@ def save_n_images(n, generator, file_dir, real_data, latent_channels):
 
 class VAE_Generator(nn.Module):
     def __init__(self, conv_dim, output_1, output_2, output_3, image_channels):
+=======
+def save_n_images(n, generator, file_dir):
+    generator.eval()
+    if n > 64:
+        n=64
+        
+    batch_size = 64
+
+    noise = torch.randn(batch_size, input_dim, 1, 1, device=device)
+    with torch.no_grad():
+        logits = generator(noise)
+    print(logits.shape)
+    logits = logits.view(batch_size,28,28)
+
+    for i in range(n):
+        file_name=f'{file_dir}/MNIST_gen_{i}.png'
+        img = logits[i].cpu()
+        plt.figure()
+        save_image(img, file_name)
+
+
+class VAE(nn.Module):
+    def __init__(self, conv_dim, latent_dim):
+        super().__init__()
+        self.latent_dim = latent_dim
+
+        self.encoder = nn.Sequential(
+                nn.Conv2d(3, conv_dim, kernel_size=3, stride=2, padding=1), # output size = conv_dim, 
+                nn.BatchNorm2d(conv_dim),
+                nn.ReLU(),
+
+                nn.Conv2d(conv_dim, conv_dim * 2, kernel_size=3, stride=2, padding=1),
+                nn.BatchNorm2d(conv_dim*2),
+                nn.ReLU(),
+
+                nn.Conv2d(conv_dim * 2, conv_dim * 4, kernel_size=3, stride=2, padding=1),
+                nn.BatchNorm2d(conv_dim*4),
+                nn.ReLU(),
+
+                nn.Flatten(), #make it so this can be split into mu and log_var
+
+        )
+
+        self.mu_mlp = nn.Linear(2048, 2048)
+        self.var_mlp = nn.Linear(2048, 2048)
+
+    def forward(self, x):
+        #batch size, h * w
+        encoding = self.encode(x)
+        mu, log_var = encoding
+        # print(f'decoded shape: {decoded.shape}')
+        z = self.reparameterize(mu, log_var)
+        
+        return mu, log_var, z
+
+    def encode(self, input):
+        encoding = self.encoder(input)
+        mu = self.mu_mlp(encoding)
+        log_var = self.var_mlp(encoding)
+
+        return mu, log_var
+    
+    def reparameterize(self, mu, log_var):
+        # Reparameterization trick:
+        # let z ~= q_psi(z|x)
+        # reparamterize z = g_psi(x, epsilon)
+        # z = mu_i + sig_i * epsilon
+
+
+        sig = torch.exp(log_var * 0.5)
+        # print(sig)
+        
+        epsilon = torch.randn_like(sig)  # Random noise from a standard normal distribution.
+        z = mu + torch.mul(sig, epsilon)
+
+        return z
+    
+    def loss_function(self, output, target, mu, log_var, epoch):
+        #here is the bread and butter
+        #were looking to optimize mu and sigma
+        
+        recon_loss = F.binary_cross_entropy(output, target, reduction='sum')
+
+        KL_div = -0.5 * torch.sum(1 + log_var - mu**2 - torch.exp(log_var))
+
+        # print(f'kl div: {KL_div}')
+        beta = 4.0
+        kl_weight = min(1.0, epoch / 20.0)  # Gradually increase beta over the first 10 epochs
+        kl_effective = beta * KL_div
+        loss = kl_effective + recon_loss
+        
+
+        return loss, kl_effective, recon_loss
+
+    def sample(self):
+
+        sampled_z = torch.randn(self.latent_dim)
+
+        sampled_images = self.decoder(sampled_z)
+
+        return sampled_images
+
+
+class VAE_Generator(nn.Module):
+    def __init__(self, conv_dim, input_dim, output_1, output_2, output_3, image_channels):
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
         super().__init__()
         #* important note: the input channels, and the input are different. the layer only cares about the # of channels, not batch size, HxW, etc
         
         
         self.encoder = nn.Sequential(
+<<<<<<< HEAD
             nn.Conv2d(3, conv_dim, kernel_size=3, stride=2, padding=1), 
+=======
+            nn.Conv2d(3, conv_dim, kernel_size=3, stride=2, padding=1), # output size = conv_dim, 
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
             nn.BatchNorm2d(conv_dim),
             nn.ReLU(),
 
@@ -76,6 +202,7 @@ class VAE_Generator(nn.Module):
             nn.Conv2d(conv_dim * 2, conv_dim * 4, kernel_size=3, stride=2, padding=1),
             nn.BatchNorm2d(conv_dim*4),
             nn.ReLU(),
+<<<<<<< HEAD
         )
 
         self.mu_mlp = nn.Linear(2048, 2048) #! not sure about this layer dimension
@@ -131,6 +258,52 @@ class VAE_Generator(nn.Module):
 
         
         # recon_loss = F.binary_cross_entropy(output, target, reduction='sum')
+=======
+
+            nn.Flatten(), #make it so this can be split into mu and log_var
+
+        )
+
+        self.mu_mlp = nn.Linear(2048, 2048) #! not sure about this layer dimension
+        self.var_mlp = nn.Linear(2048, 2048)
+        
+        
+        self.generator = nn.Sequential(
+        #layer 1
+        nn.ConvTranspose2d(input_dim, output_1, kernel_size=4, stride=1), 
+        nn.BatchNorm2d(output_1),
+        nn.ReLU(), # image size (output_1, 4, 4)
+
+        nn.ConvTranspose2d(output_1, output_2, kernel_size=3, stride=2, padding=1),
+        nn.BatchNorm2d(output_2),
+        nn.ReLU(), #image size(output_2, 7, 7)
+
+        nn.ConvTranspose2d(output_2, output_3, kernel_size=4, stride=2, padding=1), #image size (output_3, 14, 14)
+        nn.BatchNorm2d(output_3), 
+        nn.ReLU(),
+
+        nn.ConvTranspose2d(output_3, image_channels, kernel_size=4, stride=2, padding=1), #image size (image_channels, 28, 28)
+        nn.Tanh() #4x2x1 doubles the image size 
+        )
+        
+    def forward(self, x):
+        encoding = self.encode(x)
+        mu, log_var = encoding
+        # print(f'decoded shape: {decoded.shape}')
+        z = self.reparameterize(mu, log_var)
+
+        generation = self.generator(z)
+
+        return generation
+    
+    #generator loss fxn
+    def loss_function(self, D_g, output, target, mu, log_var, epoch):
+
+        #* ENCODER LOSS
+        #! replace recon loss with gaussian similarity 
+        disc_l_loss = 0
+        recon_loss = F.binary_cross_entropy(output, target, reduction='sum')
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
 
         KL_div = -0.5 * torch.sum(1 + log_var - mu**2 - torch.exp(log_var))
 
@@ -138,7 +311,11 @@ class VAE_Generator(nn.Module):
         beta = 4.0
         kl_weight = min(1.0, epoch / 20.0)  # Gradually increase beta over the first 10 epochs
         kl_effective = beta * KL_div
+<<<<<<< HEAD
         vae_loss = kl_effective
+=======
+        vae_loss = kl_effective + recon_loss
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
 
         #* GENERATOR LOSS
         epsilon = 1e-8
@@ -152,11 +329,16 @@ class VAE_Generator(nn.Module):
         
         #* TOTAL LOSS
 
+<<<<<<< HEAD
         total_loss = vae_loss + gan_loss + disc_l_loss
+=======
+        total_loss = vae_loss + gan_loss
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
 
         return total_loss
     
     def encode(self, input):
+<<<<<<< HEAD
         # print(f"Input shape to encoder: {input.shape}")  # Debug statement
 
         encoding = self.encoder(input)
@@ -167,6 +349,11 @@ class VAE_Generator(nn.Module):
         encoding = encoding.view(input.shape[0], -1)
         mu = self.mu_mlp(encoding)
         log_var = self.log_var_mlp(encoding)
+=======
+        encoding = self.encoder(input)
+        mu = self.mu_mlp(encoding)
+        log_var = self.var_mlp(encoding)
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
 
         return mu, log_var
     
@@ -185,11 +372,19 @@ class VAE_Generator(nn.Module):
 
         return z
     
+<<<<<<< HEAD
     def sample(self,batch_size, latent_channels, device):
 
         sampled_z = torch.randn(batch_size, latent_channels, 4, 4, device=device)
 
         sampled_images = self.generator(sampled_z)
+=======
+    def sample(self):
+
+        sampled_z = torch.randn(self.latent_dim)
+
+        sampled_images = self.decoder(sampled_z)
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
 
         return sampled_images
 
@@ -197,6 +392,7 @@ class VAE_Generator(nn.Module):
         
 
 class DC_Discriminator(nn.Module):
+<<<<<<< HEAD
     def __init__(self, conv_dim, image_channels):
         super().__init__()
 
@@ -243,21 +439,67 @@ class DC_Discriminator(nn.Module):
     def loss_function(self, D_g, D_x, D_s):
             epsilon = 1e-8
 
+=======
+    def __init__(self, output_1, output_2, output_3, image_channels):
+        super().__init__()
+
+        self.discriminator = nn.Sequential(
+                nn.Conv2d(image_channels, output_3, kernel_size=4, stride=2, padding=1), 
+                nn.BatchNorm2d(output_3), 
+                nn.LeakyReLU(0.2),
+
+                nn.Conv2d(output_3, output_2, kernel_size=4, stride=2, padding=1), 
+                nn.BatchNorm2d(output_2), 
+                nn.LeakyReLU(0.2),
+
+                nn.Conv2d(output_2, output_1, kernel_size=3, stride=2, padding=1),
+                nn.BatchNorm2d(output_1), 
+                nn.LeakyReLU(0.2),
+
+                nn.Conv2d(output_1, 1, kernel_size=3, stride=2, padding=1),
+                nn.Flatten(),
+
+                nn.Linear(16, 1),
+                nn.Sigmoid()
+        )
+
+    def forward(self, x):
+
+        discrimination = self.discriminator(x)
+        print(discrimination.shape)
+
+
+
+        return discrimination
+
+    def loss_function(self, D_g, D_x):
+            epsilon = 1e-8
+
+            #maximize the probability that the data is real
+            # loss = -torch.mean(torch.log(D_x + epsilon) + torch.log(1 - D_g + epsilon)) #negative sign because we are doing gradient ASCENT
+
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
             #*CHANGING TO BCE LOSS
             fake_target = torch.zeros_like(D_g) + 0.05
             real_target = torch.ones_like(D_x) * 0.95
 
             fake_loss = F.binary_cross_entropy(D_g, fake_target) #we want D_g to go to zero
             real_loss = F.binary_cross_entropy(D_x, real_target) #we want D_x to go to one
+<<<<<<< HEAD
             sampled_loss = F.binary_cross_entropy(D_s, real_target) #we want D_x to go to one
 
             loss = fake_loss + real_loss + sampled_loss
+=======
+
+            loss = fake_loss + real_loss
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
 
             return loss 
 
 
 
 # Example usage
+<<<<<<< HEAD
 output_1 = 128
 output_2 = 64
 output_3 = 32
@@ -279,6 +521,23 @@ print(summary(discriminator, input_size=(3, 32, 32)))
 
 disc_lr = 1e-3
 gen_lr = 1e-3
+=======
+input_dim = 100  # Latent vector size
+output_1 = 128
+output_2 = 64
+output_3 = 32
+image_channels = 1  # For MNIST, which is grayscale
+
+generator = VAE_Generator(32, input_dim, output_1, output_2, output_3, image_channels).to(device)
+discriminator = DC_Discriminator(output_1, output_2, output_3, image_channels).to(device)
+        
+
+from torch.optim.lr_scheduler import StepLR
+
+
+disc_lr = 1e-3
+gen_lr = 1e-4
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
 
 gen_optimizer = torch.optim.Adam(generator.parameters(), lr= gen_lr)
 disc_optimizer = torch.optim.Adam(discriminator.parameters(), lr= disc_lr)
@@ -292,10 +551,16 @@ disc_trn_loss = []
 gen_val_loss = []
 disc_val_loss = [] 
 
+<<<<<<< HEAD
 EPOCHS = 2
 k = 1
 
 
+=======
+EPOCHS = 1
+k = 1
+
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
 for epoch in range(EPOCHS):
     gen_trn_run = 0.0
     disc_trn_run = 0.0
@@ -307,10 +572,15 @@ for epoch in range(EPOCHS):
             discriminator.train()
             generator.train()
             gen_optimizer.zero_grad()  
+<<<<<<< HEAD
+=======
+
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
             disc_optimizer.zero_grad()
 
             batch_size = train_data.shape[0]
 
+<<<<<<< HEAD
             # Data handling
             real_data = train_data.view(batch_size, 3, 32, 32).to(device)
             fake_data, mu, log_var = generator(real_data)
@@ -325,12 +595,27 @@ for epoch in range(EPOCHS):
             # Train the discriminator 
             disc_loss = discriminator.loss_function(fake_prob, real_prob, sampled_prob) 
             gen_loss = generator.loss_function(fake_prob, mu, log_var, real_lth_layer, fake_lth_layer, epoch)
+=======
+            real_data = train_data.view(batch_size, 1, 28, 28).to(device)
+
+            noise = torch.randn(batch_size, input_dim, 1, 1, device= device)
+
+            fake_data = generator(noise).detach()
+
+            real_prob = discriminator(real_data)
+            fake_prob = discriminator(fake_data)
+
+            disc_loss = discriminator.loss_function(fake_prob, real_prob) 
+            gen_loss = generator.loss_function(fake_prob)
+
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
 
             disc_loss.backward()
             disc_optimizer.step()
 
             
             if batch_idx % k == 0:
+<<<<<<< HEAD
 
                 #regenerate samples
                 fake_data, mu, log_var = generator(real_data)
@@ -341,6 +626,13 @@ for epoch in range(EPOCHS):
 
                 #train generator 
                 gen_loss = generator.loss_function(fake_prob, mu, log_var, real_lth_layer, fake_lth_layer, epoch)
+=======
+                noise = torch.randn(batch_size, input_dim, 1, 1, device=device)
+                fake_data = generator(noise)
+                real_prob = discriminator(real_data)
+                fake_prob = discriminator(fake_data)
+                gen_loss = generator.loss_function(fake_prob)
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
 
                 gen_loss.backward()
                 gen_optimizer.step()
@@ -358,6 +650,7 @@ print("training finished!")
 
 
 
+<<<<<<< HEAD
 data_iter = iter(test_loader)
 images, labels = next(data_iter)
 images = images.to(device)
@@ -367,3 +660,7 @@ save_n_images(10, generator, base_path, images ,latent_channels)
 
 elapsed_time = time.time() - start_time
 print(f'Program took {elapsed_time / 60} minutes to run')
+=======
+save_n_images(10, generator, '/dors/wankowicz_lab/adrian/kinase_colabfold/kinase_new_structs/temp_outputs')
+
+>>>>>>> 60d60e650b75e1f53dc78968594c9b56448a810a
