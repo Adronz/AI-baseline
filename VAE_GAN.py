@@ -49,7 +49,7 @@ def save_n_images(n, generator, file_dir, real_data, latent_channels):
         logits, _, _ = generator(real_data)
             
     for i in range(n):
-        file_name = f'{file_dir}/CIFAR10_real)_long_{i}.png'
+        file_name = f'{file_dir}/CIFAR10_real_long_{i}.png'
         img = logits[i].cpu()  # Move the image to CPU for saving
         plt.figure()
         save_image(img, file_name)
@@ -57,6 +57,10 @@ def save_n_images(n, generator, file_dir, real_data, latent_channels):
     for i in range(n):
         file_name = f'{file_dir}/CIFAR10_sample_long_{i}.png'
         img = generator.sample(batch_size, latent_channels, device)
+        img = logits[i].cpu()  # Move the image to CPU for saving
+        plt.figure()
+        save_image(img, file_name)
+
 
 
     print('Saved Images!')
@@ -128,9 +132,9 @@ class VAE_Generator(nn.Module):
     def loss_function(self, D_g, output, target, mu, log_var, real_lth_layer, fake_lth_layer, epoch):
 
         # #* ENCODER LOSS
-        # lth_layer_sq_diff = (real_lth_layer - fake_lth_layer)**2
-        # log_prob_dx = -0.5 * lth_layer_sq_diff.sum(1) #The derivative of ln(x) = 1/x. 
-        # disc_l_loss = -log_prob_dx.mean()
+        lth_layer_sq_diff = (real_lth_layer - fake_lth_layer)**2
+        log_prob_dx = -0.5 * lth_layer_sq_diff.sum(1) #The derivative of ln(x) = 1/x. 
+        disc_l_loss = -log_prob_dx.mean()
 
         
         # recon_loss = F.binary_cross_entropy(output, target, reduction='sum')
@@ -162,7 +166,8 @@ class VAE_Generator(nn.Module):
         recon_loss = F.mse_loss(output, target, reduction='mean')
 
         # Total Loss
-        total_loss = vae_loss + gan_loss + recon_loss
+        # total_loss = vae_loss + gan_loss + recon_loss 
+        total_loss = vae_loss + gan_loss + disc_l_loss
 
         return total_loss
     
@@ -311,7 +316,7 @@ disc_trn_loss = []
 gen_val_loss = []
 disc_val_loss = [] 
 
-EPOCHS = 100
+EPOCHS = 50
 k = 1
 
 
@@ -379,8 +384,8 @@ data_iter = iter(test_loader)
 images, labels = next(data_iter)
 images = images.to(device)
 
-base_path = '/dors/wankowicz_lab/adrian/kinase_colabfold/kinase_new_structs/temp_outputs'
-save_n_images(20, generator, base_path, images ,latent_channels)
+base_path = '/dors/wankowicz_lab/adrian/kinase_colabfold/temp_outputs'
+save_n_images(10, generator, base_path, images ,latent_channels)
 
 elapsed_time = time.time() - start_time
 print(f'Program took {elapsed_time / 60} minutes to run')

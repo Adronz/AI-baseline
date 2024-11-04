@@ -69,16 +69,56 @@ Params size (MB): 0.42
 Estimated Total Size (MB): 0.65
 ----------------------------------------------------------------
 None
-EPOCH 1/10: Disc train loss: 1.5105, Gen train loss: 1.1787 
-EPOCH 2/10: Disc train loss: 1.0913, Gen train loss: 3.2394 
-EPOCH 3/10: Disc train loss: 0.8551, Gen train loss: 2.7920 
-EPOCH 4/10: Disc train loss: 0.7011, Gen train loss: 3.6131 
-EPOCH 5/10: Disc train loss: 0.6182, Gen train loss: 4.0590 
-EPOCH 6/10: Disc train loss: 0.5688, Gen train loss: 4.3395 
-EPOCH 7/10: Disc train loss: 0.5113, Gen train loss: 4.5868 
-EPOCH 8/10: Disc train loss: 0.5129, Gen train loss: 4.5930 
-EPOCH 9/10: Disc train loss: 0.4464, Gen train loss: 4.5754 
-EPOCH 10/10: Disc train loss: 0.4311, Gen train loss: 4.2713 
+EPOCH 1/50: Disc train loss: 0.6640, Gen train loss: 350.7735 
+EPOCH 2/50: Disc train loss: 0.6107, Gen train loss: 359.5540 
+EPOCH 3/50: Disc train loss: 0.5923, Gen train loss: 367.1379 
+EPOCH 4/50: Disc train loss: 0.5634, Gen train loss: 384.7249 
+EPOCH 5/50: Disc train loss: 0.5409, Gen train loss: 400.1342 
+EPOCH 6/50: Disc train loss: 0.5447, Gen train loss: 406.4089 
+EPOCH 7/50: Disc train loss: 0.4969, Gen train loss: 418.0922 
+EPOCH 8/50: Disc train loss: 0.4783, Gen train loss: 417.3028 
+EPOCH 9/50: Disc train loss: 0.4876, Gen train loss: 415.5552 
+EPOCH 10/50: Disc train loss: 0.4507, Gen train loss: 410.9948 
+EPOCH 11/50: Disc train loss: 0.4496, Gen train loss: 418.6545 
+EPOCH 12/50: Disc train loss: 0.4973, Gen train loss: 395.4330 
+EPOCH 13/50: Disc train loss: 0.4439, Gen train loss: 422.9627 
+EPOCH 14/50: Disc train loss: 0.4365, Gen train loss: 424.0577 
+EPOCH 15/50: Disc train loss: 0.4692, Gen train loss: 406.4756 
+EPOCH 16/50: Disc train loss: 0.4321, Gen train loss: 426.0039 
+EPOCH 17/50: Disc train loss: 0.4526, Gen train loss: 418.8268 
+EPOCH 18/50: Disc train loss: 0.4223, Gen train loss: 413.7810 
+EPOCH 19/50: Disc train loss: 0.4193, Gen train loss: 426.1328 
+EPOCH 20/50: Disc train loss: 0.4193, Gen train loss: 423.1584 
+EPOCH 21/50: Disc train loss: 0.4151, Gen train loss: 414.7456 
+EPOCH 22/50: Disc train loss: 0.4153, Gen train loss: 403.5508 
+EPOCH 23/50: Disc train loss: 0.4113, Gen train loss: 398.5504 
+EPOCH 24/50: Disc train loss: 0.4112, Gen train loss: 394.2274 
+EPOCH 25/50: Disc train loss: 0.4102, Gen train loss: 390.6668 
+EPOCH 26/50: Disc train loss: 0.4457, Gen train loss: 395.3083 
+EPOCH 27/50: Disc train loss: 0.4165, Gen train loss: 422.2061 
+EPOCH 28/50: Disc train loss: 0.4150, Gen train loss: 421.0600 
+EPOCH 29/50: Disc train loss: 0.4107, Gen train loss: 416.7870 
+EPOCH 30/50: Disc train loss: 0.4380, Gen train loss: 406.9520 
+EPOCH 31/50: Disc train loss: 0.4132, Gen train loss: 417.2626 
+EPOCH 32/50: Disc train loss: 0.4399, Gen train loss: 414.0948 
+EPOCH 33/50: Disc train loss: 0.4179, Gen train loss: 434.2809 
+EPOCH 34/50: Disc train loss: 0.4166, Gen train loss: 434.6427 
+EPOCH 35/50: Disc train loss: 0.4132, Gen train loss: 429.1881 
+EPOCH 36/50: Disc train loss: 0.4373, Gen train loss: 420.3428 
+EPOCH 37/50: Disc train loss: 0.4173, Gen train loss: 418.8744 
+EPOCH 38/50: Disc train loss: 0.4161, Gen train loss: 432.9732 
+EPOCH 39/50: Disc train loss: 0.4132, Gen train loss: 431.3449 
+EPOCH 40/50: Disc train loss: 0.4332, Gen train loss: 418.6759 
+EPOCH 41/50: Disc train loss: 0.4140, Gen train loss: 425.8754 
+EPOCH 42/50: Disc train loss: 0.4127, Gen train loss: 425.7677 
+EPOCH 43/50: Disc train loss: 0.4122, Gen train loss: 429.2319 
+EPOCH 44/50: Disc train loss: 0.4117, Gen train loss: 426.3630 
+EPOCH 45/50: Disc train loss: 0.4088, Gen train loss: 417.0283 
+EPOCH 46/50: Disc train loss: 0.4101, Gen train loss: 416.8899 
+EPOCH 47/50: Disc train loss: 0.4268, Gen train loss: 410.1635 
+EPOCH 48/50: Disc train loss: 0.4130, Gen train loss: 415.9890 
+EPOCH 49/50: Disc train loss: 0.4107, Gen train loss: 424.0936 
+EPOCH 50/50: Disc train loss: 0.4111, Gen train loss: 425.6360 
 training finished!
 Saved Images!
-Program took 3.3400603413581846 minutes to run
+Program took 19.75489201148351 minutes to run

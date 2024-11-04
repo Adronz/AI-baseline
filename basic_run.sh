@@ -6,7 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH --gres=gpu:1
 #SBATCH --mem=24G
-#SBATCH --time=00:20:00
+#SBATCH --time=02:20:00
 #SBATCH --job-name=output
 #SBATCH --output=output.log
 #SBATCH --error=error.err
