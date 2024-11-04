@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 SCRIPT HAS STARTED RUNNING
 this is the new one
 Using device: cuda:0
@@ -122,3 +123,5 @@ EPOCH 50/50: Disc train loss: 0.4111, Gen train loss: 425.6360
 training finished!
 Saved Images!
 Program took 19.75489201148351 minutes to run
+=======
+>>>>>>> 59db56c1f3646dc6ca7cd4444f94b6b79a03d6fb
