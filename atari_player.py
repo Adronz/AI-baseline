@@ -52,7 +52,7 @@ class Atari_Agent(nn.Module):
             q_value = self.forward(observation)
             print(q_value)
             action = torch.argmax(q_value)
-            return action
+            return action, torch.max(q_value)
         
         else:
             return random.randrange(0, self.num_moves)

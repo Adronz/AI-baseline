@@ -27,3 +27,4 @@ model = atari_player.Atari_Agent(4)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 atari_training.train(env, model, optimizer, replay_buffer, 1, 1, 1, device='cpu')
+print('Actually finished a loop!')

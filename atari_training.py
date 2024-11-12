@@ -10,26 +10,27 @@ def loss_fxn(q_target, experience_batch, gamma=0.01):
     this is scaled by the time discount gamma '''
     obs, actions, rewards, next_obs, terminated= zip(*experience_batch)
 
-    obs = torch.tensor(obs, dtype=torch.float32)
-    next_obs = torch.tensor(next_obs, dtype=torch.float32)
+    obs = torch.tensor(obs[0], dtype=torch.float32)
+    next_obs = torch.tensor(next_obs[0], dtype=torch.float32)
     next_obs = next_obs.permute(0, 3, 1, 2) #put the channel in the correct place 
-    actions = torch.tensor(actions, dtype=torch.float32)
-    rewards = torch.tensor(rewards, dtype=torch.float32)
-    terminated = torch.tensor(terminated, dtype= torch.int) #if terminated, target is only the reward
+    actions = torch.tensor(actions[0], dtype=torch.float32)
+    rewards = torch.tensor(rewards[0], dtype=torch.float32)
+    terminated = torch.tensor(terminated[0], dtype= torch.int) #if terminated, target is only the reward
 
-
-    target_actions = q_target.take_action(obs,0.01).unsqueeze(1)
-    q_values = torch.gather(target_actions, actions)
-
+    #get the max_q and next max_q of the constant Q function 
+    #using the lagging Q fxn means that the parameters can be accurately compared
+    _, max_q = q_target.take_action(obs,0.01)
+    _, next_max_q = q_target.take_action(next_obs, 0.01)
+    #! gotta get the max
 
     #get target using the reward and the old network
-    target = rewards + (1-terminated)*(gamma * q_target.take_action(next_obs, 0.01)) 
+    target = rewards + (1-terminated)*(gamma * next_max_q) 
 
-    loss = torch.mean((target - q_values)**2)
+    loss = torch.mean((target - max_q)**2)
 
     return loss
 
-#TODO create training loop function (by yourself dawg)
+
 def train(env, model, optimizer, replay_buffer, episodes, T, batch_size, device):
     
     for episode in range(episodes):
@@ -46,17 +47,17 @@ def train(env, model, optimizer, replay_buffer, episodes, T, batch_size, device)
             model.train()
             model.zero_grad()
 
-            action = model.take_action(obs, 0.01)
+            action, _ = model.take_action(obs, 0.01)
             
             # action = np.int64(action.item()) #convert get the item int
             action = np.array([action.item()], dtype=np.int64)
-            print(f'my action shape is {action.shape}')
-            print(f'my action is {action}')
+            # print(f'my action shape is {action.shape}')
+            # print(f'my action is {action}')
 
             next_obs, rewards, dones, infos = env.step(action)
             
             #add experience to replay buffer
-            experience = tuple((obs, action, rewards, next_obs, dones))
+            experience = (obs, action, rewards, next_obs, dones)
             replay_buffer.push(experience)
 
             #make sure that there is enough memory for a minibatch
