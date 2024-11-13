@@ -7,6 +7,12 @@ import torch
 import ale_py
 from torchsummary import summary
 
+#Constants
+EPISODES = 100
+UPDATE_FREQ = 10
+BATCH_SIZE = 32
+
+
 
 # gym.register_envs(ale_py)
 env = gym.make("ALE/Breakout-v5")
@@ -22,9 +28,11 @@ sample_action = env.action_space.sample()
 
 
 
-model = atari_player.Atari_Agent(4)
+q_net = atari_player.Atari_Agent(4)
+q_target_net = atari_player.Atari_Agent(4)
+torch.save(q_net.state_dict(), "breakout_model.pth") #* reset training
 # # print(summary(model, input_size=(4, 84, 84)))
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-atari_training.train(env, model, optimizer, replay_buffer, 1, 1, 1, device='cpu')
-print('Actually finished a loop!')
+optimizer = torch.optim.Adam(q_net.parameters(), lr=0.001)
+atari_training.train(env, q_net, q_target_net, optimizer, replay_buffer, EPISODES, UPDATE_FREQ, BATCH_SIZE, device='cpu')
+print('Finished training!')

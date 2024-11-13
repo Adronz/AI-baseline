@@ -49,12 +49,11 @@ class Atari_Agent(nn.Module):
         less than epsilon, take a random action!'''
         p_exploration = random.random()
         if p_exploration > epsilon:
-            q_value = self.forward(observation)
-            print(q_value)
-            action = torch.argmax(q_value)
-            return action, torch.max(q_value)
+            q_values = self.forward(observation)
+            action = torch.argmax(q_values)
+            return action
         
         else:
-            return random.randrange(0, self.num_moves)
+            return torch.tensor(random.randrange(0, self.num_moves))
 
         
