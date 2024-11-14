@@ -4,8 +4,7 @@ from collections import deque
 import random
 
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(f'Using device: {device}')
+
 
 class Replay_Buffer():
     def __init__(self,max_len):
@@ -44,16 +43,17 @@ class Atari_Agent(nn.Module):
     def forward(self, x):
         return self.network(x)
     
-    def take_action(self, observation, epsilon, device=device):
+    def take_action(self, observation, epsilon, device):
         '''take the action that with the highest q_value. If the probability of exploring is
         less than epsilon, take a random action!'''
         p_exploration = random.random()
         if p_exploration > epsilon:
-            q_values = self.forward(observation)
-            action = torch.argmax(q_values)
-            return action
+            with torch.no_grad():
+                q_values = self.forward(observation)
+                action = torch.argmax(q_values)
+                return action
         
         else:
-            return torch.tensor(random.randrange(0, self.num_moves))
+            return torch.tensor(random.randrange(0, self.num_moves), device=next(self.parameters()).device)
 
         
