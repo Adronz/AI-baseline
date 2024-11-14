@@ -29,15 +29,16 @@ class Atari_Agent(nn.Module):
         super().__init__()
         self.num_moves = num_moves
         self.network = nn.Sequential(
-        nn.Conv2d(4, 16, kernel_size=8, stride=4),
+        nn.Conv2d(4, 32, kernel_size=8, stride=4), #* nature paper skips straight to 32 layers
         nn.ReLU(),
-        nn.Conv2d(16, 32, kernel_size=4, stride=2),
+        nn.Conv2d(32, 64, kernel_size=4, stride=2), 
         nn.ReLU(),
-        # nn.Conv2d(32, 64, kernel_size=3, stride=1),
-        # nn.ReLU(),
+        nn.Conv2d(64, 64, kernel_size=3, stride=1),
+        nn.ReLU(),
         nn.Flatten(),
-        nn.Linear(in_features=32*9*9, out_features=256),
-        nn.Linear(256, num_moves),
+        nn.Linear(in_features=64*7*7, out_features=512),
+        nn.ReLU(),
+        nn.Linear(512, num_moves),
         )
 
     def forward(self, x):

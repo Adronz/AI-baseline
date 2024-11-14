@@ -33,21 +33,21 @@ def loss_fxn(q_net, q_target_net, experience_batch, device, gamma=0.9):
     return loss
 
 
-def train(env, q_net, q_target_net, optimizer, replay_buffer, episodes, update_freq, batch_size, device):
+def train(env, q_net, q_target_net, optimizer, replay_buffer, episodes, update_freq, batch_size, weight_pth, device):
     '''q_net is q_phi from the Berkeley RAIL lectures, and q_target_net is q_phi_prime'''
 
     rewards_per_episode = []
     epsilon = 1
     frame_count = 0
-    q_target_net.load_state_dict(torch.load("breakout_model.pth", weights_only=True, map_location=device))
+    q_target_net.load_state_dict(torch.load(weight_pth, weights_only=True, map_location=device))
 
 
     for episode in range(episodes):
         #* update 'ideal' memory
         if frame_count % update_freq == 0:
-                    torch.save(q_net.state_dict(), "breakout_model.pth")
-                    q_target_net.load_state_dict(torch.load("breakout_model.pth", weights_only=True, map_location=device))
-                    print('updated q_net')
+                    torch.save(q_net.state_dict(), weight_pth)
+                    q_target_net.load_state_dict(torch.load(weight_pth, weights_only=True, map_location=device))
+
 
         #* get the first frame 
         obs = torch.tensor(env.reset(), dtype=torch.float32)
@@ -61,7 +61,7 @@ def train(env, q_net, q_target_net, optimizer, replay_buffer, episodes, update_f
             q_net.train()
             optimizer.zero_grad()
 
-            epsilon = choose_epsilon(epsilon, frame_count)
+            epsilon = choose_epsilon(epsilon)
             action = q_net.take_action(obs, epsilon, device) #* take action
             
             # action = np.int64(action.item()) #convert get the item int
@@ -81,8 +81,8 @@ def train(env, q_net, q_target_net, optimizer, replay_buffer, episodes, update_f
             next_obs = torch.tensor(next_obs, dtype=torch.float32).permute(0, 3, 1, 2)
 
 
-            #make sure that there is enough memory for a minibatch
-            if replay_buffer.__len__() > batch_size:
+            #* fill half of memory for before training on a mini batch a minibatch
+            if replay_buffer.__len__() > 50000:
                 #sample from memory
                 batch = replay_buffer.sample(batch_size)
 
@@ -99,12 +99,10 @@ def train(env, q_net, q_target_net, optimizer, replay_buffer, episodes, update_f
             frame_count += 1
         
         rewards_per_episode.append(episode_reward)
-
-        print(f"Episode {episode}, Total Reward: {episode_reward}, Total Frames: {frame_count}, epsilon {epsilon}")  
+        if episode % 500 == 0:
+            print(f"Episode {episode}, Total Reward: {episode_reward}, Total Frames: {frame_count}, epsilon {epsilon}")  
 
     plot_rewards(rewards_per_episode)
-            
-
 
 
 

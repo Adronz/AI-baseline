@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd 
 import numpy as np
 from datetime import datetime
+import random
+import torch
 
 def plot_rewards(episode_rewards, window_size=100):
 
@@ -26,10 +28,18 @@ def plot_rewards(episode_rewards, window_size=100):
 
     print(f"Plot saved to: {save_path}")
 
-def choose_epsilon(epsilon, frame_count):
-    if frame_count > 1000000:
+def choose_epsilon(epsilon):
+    if epsilon <= 0.1:
         epsilon = 0.1
         return epsilon
     else:
-        epsilon = epsilon - (1/1000000)
+        epsilon = epsilon - (1/100000)
         return epsilon
+    
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+
