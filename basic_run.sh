@@ -5,8 +5,8 @@
 #SBATCH --cpus-per-task=6
 #SBATCH --nodes=1
 #SBATCH --gres=gpu:1
-#SBATCH --mem=32G
-#SBATCH --time=10:00:00
+#SBATCH --mem=40G
+#SBATCH --time=07:00:00
 #SBATCH --job-name=output
 #SBATCH --output=output.log
 #SBATCH --error=error.err

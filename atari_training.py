@@ -3,8 +3,9 @@ import torch
 import copy 
 import numpy as np
 from utils import plot_rewards, choose_epsilon
+import imageio
 
-replay_buffer = atari_player.Replay_Buffer(1000)
+
 
 def loss_fxn(q_net, q_target_net, experience_batch, device, gamma=0.9):
     '''creates a loss from the reward, q function, and the ideal q function,
@@ -86,7 +87,7 @@ def train(env, q_net, q_target_net, optimizer, replay_buffer, episodes, update_f
                 #sample from memory
                 batch = replay_buffer.sample(batch_size)
 
-                loss = loss_fxn(q_net, q_target_net, batch, device, gamma=0.9)
+                loss = loss_fxn(q_net, q_target_net, batch, device, gamma=0.95)
                 loss.backward()
                 optimizer.step()       
 
@@ -99,10 +100,114 @@ def train(env, q_net, q_target_net, optimizer, replay_buffer, episodes, update_f
             frame_count += 1
         
         rewards_per_episode.append(episode_reward)
-        if episode % 500 == 0:
+        if episode % 1000 == 0:
             print(f"Episode {episode}, Total Reward: {episode_reward}, Total Frames: {frame_count}, epsilon {epsilon}")  
-
-    plot_rewards(rewards_per_episode)
-
+            plot_rewards(rewards_per_episode)
 
 
+
+
+def play(env, q_net, episodes, weight_pth, device, video_path='long_video.mp4', fps=30):
+    '''Play the game and take a video'''
+    rewards_per_episode = []
+    frame_count = 0
+    q_net.load_state_dict(torch.load(weight_pth, weights_only=True, map_location=device))
+
+
+    for episode in range(episodes):
+        #* get the first frame 
+        obs = torch.tensor(env.reset(), dtype=torch.float32)
+        obs = torch.tensor(obs, dtype=torch.float32).permute(0, 3, 1, 2).to(device)
+
+
+        #* track episode reward
+        episode_reward = 0
+        done = False
+        q_net.eval()
+        all_frames = []
+
+
+        #* train model for k steps, and then update bot
+        while not done:
+
+            with torch.no_grad():
+                epsilon = 0
+                action = q_net.take_action(obs, epsilon, device) #* take action
+            
+            # action = np.int64(action.item()) #convert get the item int
+            action = np.array([action.item()], dtype=np.int64)
+
+            next_obs, reward, done, _ = env.step(action)
+
+            frame = env.render(mode='rgb_array')
+            all_frames.append(frame)
+            
+            #* manage devices: env.step outputs np.array so we need everything to be on cpu 
+            obs = obs.to('cpu')
+
+            next_obs = torch.tensor(next_obs, dtype=torch.float32).permute(0, 3, 1, 2)
+
+            #look at the next step in the game 
+            obs = next_obs.to(device)
+            done = done[0]
+
+            #* update episode reward 
+            episode_reward += reward.item()
+            frame_count += 1
+        
+        rewards_per_episode.append(episode_reward)
+
+    
+    imageio.mimwrite(video_path, all_frames, fps=fps)
+    print(f"Video saved to {video_path}")
+
+
+# def play(env, q_net, episodes, weight_pth, device, video_path='long_video.mp4', fps=30):
+#     '''Play the game and record one long video'''
+#     rewards_per_episode = []
+#     frame_count = 0
+#     q_net.load_state_dict(torch.load(weight_pth, map_location=device))
+#     q_net.to(device)
+#     q_net.eval()
+
+#     # Initialize a list to store all frames
+#     all_frames = []
+
+#     for episode in range(episodes):
+#         # Reset the environment and preprocess the initial observation
+#         obs = env.reset()
+#         obs = torch.tensor(obs, dtype=torch.float32).permute(0, 3, 1, 2).to(device)
+
+#         # Track episode reward
+#         episode_reward = 0
+#         done = False
+
+#         while not done:
+#             with torch.no_grad():
+#                 # Select action with epsilon=0 for deterministic behavior
+#                 action = q_net.take_action(obs, epsilon=0, device=device).item()
+
+#             # Step the environment
+#             next_obs, reward, done, _ = env.step(action)
+
+#             # Render the current frame and append to the list
+#             frame = env.render(mode='rgb_array')
+#             all_frames.append(frame)
+
+#             # Preprocess the next observation
+#             next_obs = torch.tensor(next_obs, dtype=torch.float32).permute(0, 3, 1, 2).unsqueeze(0).to(device)
+
+#             # Update the observation and reward
+#             obs = next_obs
+#             episode_reward += reward
+#             frame_count += 1
+
+#         rewards_per_episode.append(episode_reward)
+#         print(f"Episode {episode + 1}/{episodes}, Reward: {episode_reward}")
+
+#     # Save all frames as a single video
+#     imageio.mimwrite(video_path, all_frames, fps=fps)
+#     print(f"Video saved to {video_path}")
+
+#     # Optionally, plot the rewards
+#     plot_rewards(rewards_per_episode)

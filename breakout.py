@@ -17,25 +17,22 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f'Using device: {device}')
 
 #* GPU Production Constants
-EPISODES = 50000
+EPISODES = 80000
 UPDATE_FREQ = 7000
-BATCH_SIZE = 64
-BUFFER_MEM = 100000
-WEIGHT_PTH = "breakout_model_gpu.pth"
+BATCH_SIZE = 32
+BUFFER_MEM = 700000
+WEIGHT_PTH = "/dors/wankowicz_lab/adrian/kinase_colabfold/kinase_new_structs/space_invaders_model_gpu.pth"
 
-# #* CPU Testing Constants
+#* CPU Testing Constants
 # EPISODES = 100
 # UPDATE_FREQ = 10
 # BATCH_SIZE = 64
 # BUFFER_MEM = 10000
-# WEIGHT_PTH = "breakout_model_cpu.pth"
-
-
-
+# WEIGHT_PTH = "/dors/wankowicz_lab/adrian/kinase_colabfold/kinase_new_structs/breakout_model_cpu.pth"
 
 
 # gym.register_envs(ale_py)
-env = gym.make("ALE/Breakout-v5")
+env = gym.make('ALE/SpaceInvaders-v5', render_mode='rgb_array')
 
 #make environment to DQN paper specs
 wrapped_env = AtariWrapper(env)
@@ -44,12 +41,15 @@ replay_buffer = atari_player.Replay_Buffer(BUFFER_MEM)
 env = DummyVecEnv([lambda: wrapped_env])
 env = VecFrameStack(env, n_stack=4)
 
-sample_action = env.action_space.sample()
+action_space = env.action_space.n
+
+# print(action_space)
 
 
+q_net = atari_player.Atari_Agent(action_space).to(device)
+q_target_net = atari_player.Atari_Agent(action_space).to(device)
 
-q_net = atari_player.Atari_Agent(4).to(device)
-q_target_net = atari_player.Atari_Agent(4).to(device)
+
 
 # print(summary(q_net, (4, 84, 84)))
 
@@ -82,3 +82,4 @@ if hours > 0:
     print(f'Finished training! It took {hours} hours, {minutes} minutes, and {seconds} seconds.')
 else:
     print(f'Finished training! It took {minutes} minutes and {seconds} seconds.')
+

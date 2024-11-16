@@ -23,10 +23,8 @@ def plot_rewards(episode_rewards, window_size=100):
     plt.legend()
 
     # Save with a timestamp
-    save_path = f"/dors/wankowicz_lab/adrian/temp/reward_plot_gpu_test.png"
+    save_path = f"/dors/wankowicz_lab/adrian/temp/space_invaders_reward_plot_gpu.png"
     plt.savefig(save_path)
-
-    print(f"Plot saved to: {save_path}")
 
 def choose_epsilon(epsilon):
     if epsilon <= 0.1:
