@@ -13,7 +13,7 @@ def plot_rewards(episode_rewards, window_size=100):
     smoothed_rewards = np.convolve(episode_rewards, np.ones(window_size) / window_size, mode='valid')
 
     # Plot original and smoothed rewards
-    plt.plot(episode_rewards, label='Original', alpha=0.3)
+    # plt.plot(episode_rewards, label='Original', alpha=0.3)
     plt.plot(smoothed_rewards, label='Smoothed', linewidth=2)
 
     plt.xlabel('Episode')
@@ -23,15 +23,15 @@ def plot_rewards(episode_rewards, window_size=100):
     plt.legend()
 
     # Save with a timestamp
-    save_path = f"/dors/wankowicz_lab/adrian/temp/space_invaders_reward_plot_gpu.png"
+    save_path = f"/dors/wankowicz_lab/adrian/temp/sea_quest_reward_plot_gpu.png"
     plt.savefig(save_path)
 
 def choose_epsilon(epsilon):
-    if epsilon <= 0.1:
-        epsilon = 0.1
+    if epsilon <= 0.05:
+        epsilon = 0.05
         return epsilon
     else:
-        epsilon = epsilon - (1/100000)
+        epsilon = epsilon - (1/500000)
         return epsilon
     
 def set_seed(seed):

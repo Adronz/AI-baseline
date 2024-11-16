@@ -5,11 +5,11 @@
 #SBATCH --cpus-per-task=6
 #SBATCH --nodes=1
 #SBATCH --gres=gpu:1
-#SBATCH --mem=40G
+#SBATCH --mem=45G
 #SBATCH --time=07:00:00
-#SBATCH --job-name=output
-#SBATCH --output=output.log
-#SBATCH --error=error.err
+#SBATCH --job-name=turing2
+#SBATCH --output=sea.log
+#SBATCH --error=sea_error.err
 
 
 source ~/miniconda3/etc/profile.d/conda.sh   # Source the conda script (adjust path if needed)
