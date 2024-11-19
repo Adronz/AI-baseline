@@ -7,9 +7,9 @@
 #SBATCH --gres=gpu:1
 #SBATCH --mem=45G
 #SBATCH --time=07:00:00
-#SBATCH --job-name=turing2
-#SBATCH --output=sea.log
-#SBATCH --error=sea_error.err
+#SBATCH --job-name=turing3
+#SBATCH --output=breakout.log
+#SBATCH --error=breakout_error.err
 
 
 source ~/miniconda3/etc/profile.d/conda.sh   # Source the conda script (adjust path if needed)

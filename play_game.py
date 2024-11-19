@@ -10,7 +10,7 @@ import time
 from utils import set_seed
 
 start_time = time.time()
-set_seed(42)
+set_seed(12)
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -20,10 +20,14 @@ print(f'Using device: {device}')
 # WEIGHT_PTH = "pong_model_gpu.pth"
 
 #* CPU Testing Constants
-EPISODES = 100
+EPISODES = 10
+# WEIGHT_PTH = "/dors/wankowicz_lab/adrian/kinase_colabfold/kinase_new_structs/space_invaders_model_gpu.pth"
+# WEIGHT_PTH = "/dors/wankowicz_lab/adrian/kinase_colabfold/kinase_new_structs/sea_quest_model_gpu.pth"
 WEIGHT_PTH = "/dors/wankowicz_lab/adrian/kinase_colabfold/kinase_new_structs/breakout_model_gpu.pth"
 
 # gym.register_envs(ale_py)
+# env = gym.make('ALE/SpaceInvaders-v5', render_mode='rgb_array')
+# env = gym.make('ALE/Seaquest-v5', render_mode='rgb_array')
 env = gym.make('ALE/Breakout-v5', render_mode='rgb_array')
 
 #make environment to DQN paper specs
@@ -36,8 +40,8 @@ env = VecFrameStack(env, n_stack=4)
 #     env,
 #     video_folder='/dors/wankowicz_lab/adrian/temp/videos/',                # Directory to save videos
 #     record_video_trigger=lambda episode_id: episode_id == 0,  # Record the first episode
-#     video_length=10000,                     # Number of steps to record
-#     name_prefix='breakout_test'                 # Prefix for video files
+#     video_length=100000,                     # Number of steps to record
+#     name_prefix='breakout'                 # Prefix for video files
 # )
 
 action_space = env.action_space.n

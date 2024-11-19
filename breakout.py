@@ -10,21 +10,20 @@ import time
 from utils import set_seed
 
 start_time = time.time()
-set_seed(69)
+set_seed(12)
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f'Using device: {device}')
 
 # #* GPU Production Constants
-EPISODES = 70000
+EPISODES = 40000
 UPDATE_FREQ = 7000
 BATCH_SIZE = 64
-BUFFER_MEM = 700000
-WEIGHT_PTH = "/dors/wankowicz_lab/adrian/kinase_colabfold/kinase_new_structs/space_invaders_model_gpu.pth"
-# WEIGHT_PTH = "/dors/wankowicz_lab/adrian/kinase_colabfold/kinase_new_structs/sea_quest_model_gpu.pth"
-# WEIGHT_PTH = "/dors/wankowicz_lab/adrian/kinase_colabfold/kinase_new_structs/breakout_model_gpu.pth"
-
+BUFFER_MEM = 1000000
+# # WEIGHT_PTH = "/dors/wankowicz_lab/adrian/kinase_colabfold/kinase_new_structs/space_invaders_model_gpu.pth"
+# # WEIGHT_PTH = "/dors/wankowicz_lab/adrian/kinase_colabfold/kinase_new_structs/sea_quest_model_gpu.pth"
+WEIGHT_PTH = "/dors/wankowicz_lab/adrian/kinase_colabfold/kinase_new_structs/breakout_model_gpu.pth"
 
 
 # #* CPU Testing Constants

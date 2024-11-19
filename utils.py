@@ -5,7 +5,7 @@ from datetime import datetime
 import random
 import torch
 
-def plot_rewards(episode_rewards, window_size=100):
+def plot_rewards(episode_rewards, window_size=500):
 
     plt.figure()
 
@@ -23,15 +23,17 @@ def plot_rewards(episode_rewards, window_size=100):
     plt.legend()
 
     # Save with a timestamp
-    save_path = f"/dors/wankowicz_lab/adrian/temp/sea_quest_reward_plot_gpu.png"
+    save_path = f"/dors/wankowicz_lab/adrian/temp/breakout_reward_plot_gpu.png"
     plt.savefig(save_path)
+    plt.close
+    
 
 def choose_epsilon(epsilon):
     if epsilon <= 0.05:
         epsilon = 0.05
         return epsilon
     else:
-        epsilon = epsilon - (1/500000)
+        epsilon = epsilon - (1/50000)
         return epsilon
     
 def set_seed(seed):
